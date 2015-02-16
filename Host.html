@@ -1,0 +1,151 @@
+<!doctype html>
+  <head>
+    <title>video host</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      #container {
+ 
+}
+ 
+#controls {
+bottom:0;
+left:0;
+margin:auto;
+width:60%;
+}
+ 
+input[type=button] {
+ background:#000000;
+ border:none;
+ color:#FFFFFF;
+ width:50%;
+ height:3em;
+ float:left;
+}
+ 
+input[type=button]:hover {
+background:#FFFFFF;
+color:#000000;
+}
+ 
+video{
+  /*this is the size of the original video file*/
+  display:block; 
+  width: 1280px;
+  height: 720px;
+}
+ 
+video.scale {
+  
+}
+ 
+#mask {
+  /*this is the original margin when loading - this is same as case 4 in click - this is also the css that is altered */
+margin-left:150px;
+margin-top:310px;
+ 
+/*Scaling the video - should be 5.2 for full screen */
+    -webkit-transform: scale(2);
+    -moz-transform: scale(2);
+    -o-transform: scale(2);
+    -ms-transform: scale(2);
+    transform: scale(2);
+  }
+ 
+ 
+#canvas {
+border:15px solid #000000;
+width:60%;
+height:700px;
+overflow:hidden;
+left:0;
+position:relative;
+margin:auto;
+}
+    </style>
+ 
+        <script src="http://code.jquery.com/jquery-latest.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.min.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+ 
+  </head>
+  <body>
+This is LocX
+<div id="printX"></div>
+This is LocY
+<div id="printY"></div>
+ 
+<div id="container">
+<div id="canvas">
+    <div id="mask" >
+ 
+  <video id="video-source" load >
+      <source src="final2.mp4" type="video/mp4" id="zoom">
+    </video>
+    </div>
+    
+</div>
+ 
+    <div id="controls">
+<script>
+//this defines the video file for custom buttons
+var video = document.getElementsByTagName('video')[0];
+</script>
+ 
+<input type="button" value="PLAY" onclick="video.play()" class="play" class="playc">
+<input type="button" value="PAUSE" onclick="video.pause()" class="pause" class="playc">
+</div>
+ 
+</div>
+ 
+<script>
+var locX;
+var locY;
+ 
+  //initialise the socket connection
+  var socket = io();
+ 
+    //this is for the video host to receive messages
+    socket.on('touch data', function(newmsg){
+        //create a variable for the message
+                console.log("from the video +" + newmsg);
+ 
+        //split the incoming string by / with a limit of 2 array positions
+        var loc = newmsg.split("/", 2);
+        //define each array position in a new variable
+        locX = loc[0];
+        console.log(locX);
+        locY = loc[1];
+ 
+ 
+        //to test, add these to a div in the body and print out the variables
+        document.getElementById('printX').innerHTML = locX;
+        document.getElementById('printY').innerHTML = locY;
+ 
+//A
+    if(locX < 0 && locY > 0){
+      $('#mask').css({'margin-left':"150px",
+                    'margin-top':"-370px"});
+    } 
+//B
+    if (locX < 0 && locY < 0){
+      $('#mask').css({'margin-left':"300px",
+                    'margin-top':"310px"});
+    } 
+//C
+    if(locX > 0 && locY < 0){
+      $('#mask').css({'margin-left':"-550px",
+                    'margin-top':"310px"});
+    } 
+//D
+    if (locX > 0 && locY > 0 ){
+      $('#mask').css({'margin-left':"-550px",
+                    'margin-top':"-370px"});
+    }
+});
+ 
+</script>
+  </body>
+</html>
